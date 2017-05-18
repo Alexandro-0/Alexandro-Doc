@@ -1,0 +1,189 @@
+﻿<html>
+<head>
+<style>
+body {
+    font-family: monospace;
+}
+#div01 {
+	background: #B2DFDB;
+    padding: 7;
+}
+#div02 {
+	background: #E0F2F1;
+    padding: 15;
+}
+#div03 {
+	background: #B2DFDB;
+    padding-bottom: 10;
+    padding-top: 1;    
+    padding-right: 10;    
+    padding-left: 10;
+    width:40%;
+}
+#div04 {
+	background: #FFEBEE;
+    padding-bottom: 10;
+    padding-top: 1;    
+    padding-right: 10;    
+    padding-left: 10;
+    width: 40%;
+}
+#p01 {
+	font-family: monospace;
+    color: #009688;
+}
+#p02 {
+	font-family: monospace;
+    color: #004D40;
+    font-weight: bold;
+}
+#p03 {
+	font-family: monospace;
+    color: #004D40;
+    font-weight: bold;
+    font-size: 18px;
+}
+#p04 {
+	font-family: monospace;
+    color: #EF5350;
+    font-weight: bold;
+    font-size: 18px;
+}
+#lable01 {/*transform: scale(1.5);*/
+	
+    font-size: 16px;
+}
+#resultlayout {
+	background: white;
+    padding: 15;    
+    margin: 15;
+    width: 80%;
+}
+.button {
+    background-color: #26A69A; /* Green */
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+}
+.button1 {
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+}
+td {
+    text-align: left;
+    padding: 8px;
+}
+</style>
+</head>
+<body>
+	<div class="div01" align="center">
+		<h2 id="p01">OneTime Background Service Code Generator</h2>
+		<h2 id="p02">Android</h2>
+    </div>
+    <div id="div02" align="center">
+       	<p>Service Name <input id="service_name" type="text"></p>
+        
+        <p id="p03">200 Series</p>
+        <div>
+        
+        <table id="div03">
+            <tr>
+            <td><input type="checkbox" name="e200" id="e200"><label id="lable01"> 200 - OK</label></td>
+            </tr>
+            <tr>
+            <td><input type="checkbox" name="e201" id="e201"><label id="lable01"> 201 - Created</label></td>
+            </tr>
+         </table>
+        </div>
+        <div>
+        
+        <p id="p04">400 Series</p>   
+        	<table id="div04">
+            	<tr>
+                <td><input type="checkbox" name="e400" id="e400"><label id="lable01"> 400 - Bad Request</label></td>
+                </tr>
+                <tr>
+            	<td><input type="checkbox" name="e401" id="e401"><label id="lable01"> 401 - Unauthorized</label></td>
+                </tr>
+            	<td><input type="checkbox" name="e403" id="e403"><label id="lable01"> 403 - Forbidden</label></td>
+                </tr>
+            	<td><input type="checkbox" name="e404" id="e404"><label id="lable01"> 404 - Not Found</label></td>
+                </tr>
+            </table>
+        </div> 
+        
+        <br>
+		<button class="button button1" onclick="onGenerate()">Generate</button>
+        
+        <div id="resultlayout"></div>
+    </div>
+    
+    <script>
+		function onGenerate() {
+            var service_tx = document.getElementById("service_name").value;
+            //document.getElementById("resultlayout").innerHTML = service_tx.value;
+            
+            var ln = '<br>';
+            var bgTx = '@Background';
+            var uiTx = '@UiThread';
+            
+            var bgVoidTx = bgTx + ln + 'public void '+ service_tx + '_start(){'
+            + ln + 'OTSResponseEntity entity = null;'
+            + ln + 'try {'
+            + ln + '} catch(Exception e){e.printStackTrace();}'
+            + ln + service_tx + '_done(entity);' + '}';
+            
+            var e200Tx = '';
+            var e201Tx = '';
+            var e400Tx = '';
+            var e401Tx = '';
+            var e403Tx = '';
+            var e404Tx = '';
+            
+            if (document.getElementById("e200").checked) {
+            	e200Tx = ln + 'if (entity != null && entity.getStatusCode() == HttpStatus.OK){}';
+            } 
+            if (document.getElementById("e201").checked) {
+            	e201Tx = ln + 'else if (entity != null && entity.getStatusCode() == HttpStatus.CREATED){}';
+            } 
+            if (document.getElementById("e400").checked) {
+            	e400Tx = ln + 'else if (entity != null && entity.getStatusCode() == HttpStatus.BAD_REQUEST){}';
+            } 
+            if (document.getElementById("e401").checked) {
+            	e401Tx = ln + 'else if (entity != null && entity.getStatusCode() == HttpStatus.UNAUTHORIZED){}';
+            } 
+            if (document.getElementById("e403").checked) {
+            	e403Tx = ln + 'else if (entity != null && entity.getStatusCode() == HttpStatus.FORBIDDEN){}';
+            } 
+            if (document.getElementById("e404").checked) {
+            	e404Tx = ln + 'else if (entity != null && entity.getStatusCode() == HttpStatus.NOT_FOUND){}';
+            } 
+            
+            var uiVoidTx = uiTx + ln + 'public void '+ service_tx + '_done(OTSResponeEntity entity){'
+            + e200Tx
+            + e201Tx
+            + e400Tx
+            + e401Tx
+            + e403Tx
+            + e404Tx
+            + ln + 'else {GenUtils.showConnectionErrorDialog(this, getSupportedFragment(), null);}'
+            + ln + '}';
+            
+            print(bgVoidTx + ln + uiVoidTx);
+            
+		}
+        
+        function print(str){
+        	document.getElementById("resultlayout").innerHTML = str;
+        }
+	</script>
+</body>
+  
+</html>
