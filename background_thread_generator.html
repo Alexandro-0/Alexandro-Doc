@@ -1,4 +1,4 @@
-﻿<html>
+<html>
 <head>
 <style>
 body {
@@ -166,14 +166,14 @@ td {
             	e404Tx = ln + 'else if (entity != null && entity.getStatusCode() == HttpStatus.NOT_FOUND){}';
             } 
             
-            var uiVoidTx = uiTx + ln + 'public void '+ service_tx + '_done(OTSResponeEntity entity){'
+            var uiVoidTx = uiTx + ln + 'public void '+ service_tx + '_done(OTSResponseEntity entity){'
             + e200Tx
             + e201Tx
             + e400Tx
             + e401Tx
             + e403Tx
             + e404Tx
-            + ln + 'else {GenUtils.showConnectionErrorDialog(this, getSupportedFragment(), null);}'
+            + ln + 'else {GenUtils.showConnectErrorDialog(this, getSupportFragmentManager(), entity);}'
             + ln + '}';
             
             print(bgVoidTx + ln + uiVoidTx);
